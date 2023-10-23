@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <table class="table" border="1" id="table">
+        <thead>
+            <tr>
+                <td>ID</td>
+                <td>Name</td>
+                <td>Image</td>
+                <td>Verified</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
+
+    <script>
+        var allData = [];
+        fetchData();
+        function fetchData() {
+            fetch('get-data.php', {
+                method: 'GET',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    if (data && data.length) {
+                        allData = [...data];
+                        const tBody = document.getElementById('table-body');
+                        console.log(tBody);
+                        var htmlRes = "";
+                        data.forEach(element => {
+                            const res = `
+                                <tr>
+                                    <td>${element.id}</td>
+                                    <td>${element.name}</td>
+                                    <td><img src="${element.img_link}"/></td>
+                                    <td>${element.is_valid}</td>
+                                    <td><button onclick="verifyData(${element.id})">Verify</button></td>  
+                                </tr>
+                            `
+                            htmlRes += res;
+                        });
+                        tBody.innerHTML = htmlRes;
+                    }
+                })
+        }
+        function verifyData(id) {
+            const currentData = allData.find((data) => data.id == id);
+            var formData = new FormData();
+            Object.keys(currentData).forEach((key) => {
+                formData.append(key, currentData[key]);
+            })
+            fetch('verify-data.php', {
+                method: 'POST',
+                body: formData,
+            }).then(response => response.text()).then((response) => {
+                console.log(response);
+            })
+        }
+    </script>
+</body>
+
+</html>

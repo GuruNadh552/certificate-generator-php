@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="message"></div> <!-- This is where the message will be displayed -->
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="text" name="phone" placeholder="Phone ">
+        <input type="submit" name="upload" value="Get Certificate">
+    </form>
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            fetch('get-certificate.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data)
+                    if (data.includes('uploads/')) {
+                        // Create an anchor element
+                        var downloadLink = document.createElement("a");
+                        downloadLink.href = data;
+                        // Trigger a click event to start the download
+                        downloadLink.click();
+                    }
+                    document.getElementById('message').innerText = data; // display the message
+                    this.reset(); // reset the form
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>

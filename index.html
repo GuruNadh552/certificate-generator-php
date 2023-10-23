@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Image Upload</title>
+</head>
+
+<body>
+    <div id="message"></div> <!-- This is where the message will be displayed -->
+    <form id="upload-form" action="upload.php" method="post" enctype="multipart/form-data">
+        <input type="text" name="name" placeholder="Name ">
+        <input type="text" name="phone" placeholder="Phone ">
+        <input type="file" name="image" accept="image/*">
+        <input type="submit" name="upload" value="Upload Image">
+    </form>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            fetch('upload.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data)
+                    document.getElementById('message').innerText = data; // display the message
+                    this.reset(); // reset the form
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+
+</body>
+
+</html>
